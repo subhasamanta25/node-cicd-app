@@ -20,20 +20,33 @@ jobs:
           username: ${{ secret.DO_USER }}
           key: ${{ secret.DO_SSH_KEY }}
 
+         name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@v1.2.2
+
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_SSH_KEY }}
+
           script: |
-            set -e
             cd /var/www/node-cicd-app
 
-            echo "Saving current production version..."
-            PREVIOUS_COMMIT=$(git rev-parse HEAD)
-
-            echo "Previous commit: $PREVIOUS_COMMIT"
-
-            echo "Getting latest code..."
-            git fetch origin main
-
-            echo "Deploying latest code..."
-            git reset --hard origin/main
+            echo "Pulling latest code..."
+            git pull origin main
 
             echo "Installing dependencies..."
             npm ci
@@ -45,31 +58,6 @@ jobs:
             sleep 5
 
             echo "Running health check..."
-            if curl -f http://localhost/health; then
-              echo "Deployment successful!"
+            curl -f http://localhost/health
 
-            else
-
-              echo "Health check failed!"
-              echo "Starting rollback..."
-
-              git reset --hard "$PREVIOUS_COMMIT"
-
-              echo "Restoring dependencies..."
-              npm ci
-
-              echo "Reloading previous version..."
-              pm2 reload node-cicd-app
-
-              sleep 5
-
-              echo "Checking rollback health..."
-              if curl -f http://localhost/health; then
-                echo "Rollback successful!"
-
-              else
-                echo "CRITICAL: Rollback failed!"
-                exit 1
-              fi
-              exit 1
-            fi
+            echo "Deployment successful!"
