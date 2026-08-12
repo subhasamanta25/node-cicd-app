@@ -21,9 +21,63 @@ jobs:
           key: ${{ secret.DO_SSH_KEY }}
 
           script: |
+            set -e
             cd /var/www/node-cicd-app
-            git pull origin main
-            npm ci 
+
+            echo "Saving current production version..."
+            PREVIOUS_COMMIT=$(git rev-parse HEAD)
+
+            echo "Previous commit: $PREVIOUS_COMMIT"
+
+            echo "Getting latest code..."
+            git fetch origin main
+
+            echo "Deploying latest code..."
+            git reset --hard origin/main
+
+            echo "Installing dependencies..."
+            npm ci
+
+            echo "Reloading application..."
             pm2 reload node-cicd-app
+
+            echo "Waiting for application..."
             sleep 5
-            curl -f http://localhost/health
+
+            echo "Running health check..."
+
+            if curl -f http://localhost/health; then
+
+              echo "Deployment successful!"
+
+            else
+
+              echo "Health check failed!"
+              echo "Starting rollback..."
+
+              git reset --hard "$PREVIOUS_COMMIT"
+
+              echo "Restoring dependencies..."
+              npm ci
+
+              echo "Reloading previous version..."
+              pm2 reload node-cicd-app
+
+              sleep 5
+
+              echo "Checking rollback health..."
+
+              if curl -f http://localhost/health; then
+
+                echo "Rollback successful!"
+
+              else
+
+                echo "CRITICAL: Rollback failed!"
+                exit 1
+
+              fi
+
+              exit 1
+
+            fi
