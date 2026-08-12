@@ -45,9 +45,7 @@ jobs:
             sleep 5
 
             echo "Running health check..."
-
             if curl -f http://localhost/health; then
-
               echo "Deployment successful!"
 
             else
@@ -66,18 +64,12 @@ jobs:
               sleep 5
 
               echo "Checking rollback health..."
-
               if curl -f http://localhost/health; then
-
                 echo "Rollback successful!"
 
               else
-
                 echo "CRITICAL: Rollback failed!"
                 exit 1
-
               fi
-
               exit 1
-
             fi
