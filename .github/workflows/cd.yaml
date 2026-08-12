@@ -1,0 +1,29 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to DigitalOcean
+        uses: actions/ssh-action@v1.2.2
+
+        with:
+          host: ${{ secret.DO_HOST }}
+          username: ${{ secret.DO_USER }}
+          key: ${{ secret.DO_SSH_KEY }}
+
+          script: |
+            cd /var/www/node-cicd-app
+            git pull origin main
+            npm ci 
+            pm2 reload node-cicd-app
+            sleep 5
+            curl -f http://localhost/health
