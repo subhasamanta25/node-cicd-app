@@ -3,7 +3,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "Hello from Node.js app" });
+  res.json({ message: "Hello from Node.js app edoited by Santu" });
 });
 
 app.get("/health", (req, res) => {
@@ -22,4 +22,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = app;
+module.exports = app;            
