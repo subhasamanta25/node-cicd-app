@@ -5,6 +5,10 @@ on:
     workflows: [Node.js CI]
     type:
     - complete
+  
+  push:
+    branches:
+      - main
 
   workflow_dispatch:
 
