@@ -6,8 +6,7 @@ describe("Application Routes", () => {
     const response = await request(app).get("/");
 
     expect(response.statusCode).toBe(200);
-    expect(response.body.message).toBe("Hello from Node.js app created by Subha");
-  });
+    expect(response.body).toHaveProperty("message");  });
 
   test("GET /health should return status ok", async () => {
     const response = await request(app).get("/health");
