@@ -3,7 +3,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "Hello from Node.js app created by Subha" });
+  res.json({ message: "Hello from Node.js app created by Subha!!" });
 });
 
 app.get("/health", (req, res) => {
@@ -11,7 +11,7 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/about", (req, res) => {
-  res.json({ message: "Successfully Done CI/CD Demo Application" });
+  res.json({ message: "Successfully Done CI/CD Demo Application!!" });
 });
 
 if (require.main === module) {
