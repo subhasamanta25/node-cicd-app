@@ -19,7 +19,7 @@ describe("Application Routes", () => {
     const response = await request(app).get("/about");
 
     expect(response.statusCode).toBe(200);
-    expect(response.body.message).toBe("CI/CD Demo Application");
+    expect(response.body.message).toBe("Successfully Done CI/CD Demo Application");
   });
 
   test("GET /unknown should return 404", async () => {
