@@ -186,4 +186,3 @@ Success
 6. PM2 reloads the Node.js application.
 7. The /health endpoint is checked to verify that the application is running correctly.
 8. If the health check succeeds, the deployment is considered successful.
-
